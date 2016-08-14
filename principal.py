@@ -10,6 +10,7 @@
 import wx
 import wx.xrc
 import grafica
+import numpy as np
 
 ###########################################################################
 ## Class MyFrame1
@@ -90,7 +91,7 @@ class MyFrame1 ( wx.Frame ):
 		self.m_staticText3.Wrap( -1 )
 		fgSizer3.Add( self.m_staticText3, 0, wx.ALL, 5 )
 		
-		self.m_staticText4 = wx.StaticText( self, wx.ID_ANY, u"Fuerza (10^4N)", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText4 = wx.StaticText( self, wx.ID_ANY, u"Fuerza ( 10^4 N)", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText4.Wrap( -1 )
 		fgSizer3.Add( self.m_staticText4, 0, wx.ALL, 5 )
 		
@@ -126,13 +127,13 @@ class MyFrame1 ( wx.Frame ):
 		fgSizer6.SetFlexibleDirection( wx.BOTH )
 		fgSizer6.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 	
-		fgSizer6.AddSpacer( ( 40, 0), 1, wx.EXPAND, 5 )
+		fgSizer6.AddSpacer( ( 10, 0), 1, wx.EXPAND, 5 )
 		
 		self.m_staticText8 = wx.StaticText( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText8.Wrap( -1 )
 		fgSizer6.Add( self.m_staticText8, 0, wx.ALL, 5 )
 		
-		fgSizer6.AddSpacer( ( 40, 0), 1, wx.EXPAND, 5 )
+		fgSizer6.AddSpacer( ( 10, 0), 1, wx.EXPAND, 5 )
 	
 		self.m_staticText9 = wx.StaticText( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText9.Wrap( -1 )
@@ -148,7 +149,7 @@ class MyFrame1 ( wx.Frame ):
 		
 		fgSizer5.AddSpacer( ( 120, 0), 1, wx.EXPAND, 5 )
 		
-		self.m_button3 = wx.Button( self, wx.ID_ANY, u"Continuar", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_button3 = wx.Button( self, wx.ID_ANY, u"Graficar", wx.DefaultPosition, wx.DefaultSize, 0 )
 		fgSizer5.Add( self.m_button3, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
 		
 		self.m_button4 = wx.Button( self, wx.ID_ANY, u"Resetear", wx.DefaultPosition, wx.DefaultSize, 0 )
@@ -179,12 +180,19 @@ class MyFrame1 ( wx.Frame ):
 		self.x_data = []
 		self.y_data = []
 		self.x_media = 0.0
+		self.x_total = 0.0
+		self.x_cuadrado = 0.0
 		self.y_media = 0.0
-		self.b1 = 0.0
-		self.b0 = 0.0
+		self.y_total = 0.0
+		self.y_log = 0.0
+		self.x_y_log = 0.0
+		self.b1_lineal = 0.0
+		self.b0_lineal = 0.0
+		self.b1_nolineal = 0.0
+		self.b0_nolineal = 0.0
+		self.e = 2.71828182846
 	def __del__( self ):
 		pass
-	
 	
 	# Virtual event handlers, overide them in your derived class
 	def num_pares( self, event ):
@@ -217,9 +225,12 @@ class MyFrame1 ( wx.Frame ):
 				coun = 0
 			if(coun):
 				self.x_data.append(x_unit)
-				self.x_media = self.x_media + x_unit
+				self.x_total = self.x_total + x_unit
+				self.x_cuadrado = self.x_cuadrado + (x_unit * x_unit)
 				self.y_data.append(y_unit)
-				self.y_media = self.y_media + y_unit
+				self.y_log = self.y_log + (np.log(y_unit))
+				self.x_y_log = self.x_y_log + ((np.log(y_unit)) * x_unit)
+				self.y_total = self.y_total + y_unit
 				self.n_datos = int(self.n_datos) - 1;
 				self.m_textCtrl2.SetValue("")
 				self.m_textCtrl3.SetValue("")
@@ -236,6 +247,8 @@ class MyFrame1 ( wx.Frame ):
 			
 		if int(self.n_datos) >= 1:
 			print " faltan "
+			print "x = ", self.x_data
+			print "y = ", self.y_data
 		else:
 			self.m_textCtrl2.Enable(False)
 			self.m_textCtrl3.Enable(False)
@@ -244,12 +257,17 @@ class MyFrame1 ( wx.Frame ):
 			self.m_textCtrl2.SetValue("")
 			self.m_textCtrl3.SetValue("")
 			print "completos"
-			self.calcular()
-		print "x = ",self.x_data, " y = ", self.y_data
+			self.x_media = self.x_total / (len(self.x_data))
+			self.y_media = self.y_total / (len(self.y_data))
+			self.y_log_media = self.y_log / (len(self.y_data))
+			self.lineal()
+			self.no_lineal()
+			print "x = ", self.x_data
+			print "y = ", self.y_data
 		
 	def continuar( self, event ):
 		grafico = grafica.Grafica()
-		grafico.dibujar(self.b1, self.b0, self.x_data, self.y_data, self)
+		grafico.dibujar(self.b1_lineal, self.b0_lineal, self.b1_nolineal, self.b0_nolineal, self.x_data, self.y_data, self)
 
 	def resetear(self, event):
 		self.m_textCtrl1.Enable(True)
@@ -261,34 +279,64 @@ class MyFrame1 ( wx.Frame ):
 		self.m_textCtrl1.SetValue("")
 		self.m_textCtrl2.SetValue("")
 		self.m_textCtrl3.SetValue("")
-		self.x_data = []	
-		self.y_data = []	
-		self.x_media = 0.0	
-		self.y_media = 0.0	
-		self.n_data = 0
+		self.x_data = []
+		self.y_data = []
+		self.x_media = 0.0
+		self.x_total = 0.0
+		self.x_cuadrado = 0.0
+		self.y_media = 0.0
+		self.y_total = 0.0
+		self.y_log = 0.0
+		self.x_y_log = 0.0
+		self.b1_lineal = 0.0
+		self.b0_lineal = 0.0
+		self.b1_nolineal = 0.0
+		self.b0_nolineal = 0.0
+	
 	def display ( self, event ):
 		self.m_staticText11.SetLabel("")
 		self.m_staticText10.SetLabel("")
-	def calcular ( self ):
-		print "media x ",self.x_media," media y", self.y_media
-		print "total x ",len(self.x_data)," total y", len(self.y_data)
-		sumatoria = 0.0
-		sumaa = 0.0
+	
+	def lineal ( self ):
+		print "	Valores Lineales"
+		print "sumatoria x = ", self.x_total
+		print "sumatoria y =", self.y_total
+		print "total x = ", len(self.x_data)
+		print "total y = ", len(self.y_data)
+		print "media x = ", self.x_media
+		print "media y = ", self.y_media	
+		dividendo = 0.0
+		divisor = 0.0
 		flag = len(self.x_data) - 1
-		self.x_media = self.x_media / len(self.x_data)	  
-		self.y_media = self.y_media / len(self.y_data)	  
-		print "X_media = ",self.x_media, "  Y_media = ", self.y_media	
 		while(flag >= 0):
-			sumatoria = sumatoria + ((self.x_data[flag] - self.x_media)*(self.y_data[flag] - self.y_media))
-			sumaa = sumaa + ((self.x_data[flag] - self.x_media)*(self.x_data[flag] - self.x_media))
-			print "iteracion ", self.x_data[flag] , self.y_data[flag]
+			dividendo = dividendo + ((self.x_data[flag] - self.x_media)*(self.y_data[flag] - self.y_media))
+			divisor = divisor + ((self.x_data[flag] - self.x_media)*(self.x_data[flag] - self.x_media))
 			flag = flag -1
-		self.b1 = sumatoria / sumaa
-		self.b0 = self.y_media - (self.b1*self.x_media)
-		ecuacion ="Ecuacion Lineal:  f(x) = "+ str(self.b1)+"x +"+str(self.b0)
+		self.b1_lineal = dividendo / divisor
+		self.b0_lineal = self.y_media - (self.b1_lineal*self.x_media)
+		ecuacion ="Ecuacion Lineal:  f(x) = "+ str(round(self.b1_lineal,6))+"x +"+str(round(self.b0_lineal,6))
 		self.m_staticText8.SetLabel(ecuacion)
+		print "Valor de b1 = " ,self.b1_lineal
+		print "Valor de b0 = " ,self.b0_lineal
+		print ecuacion
+		
+	def no_lineal ( self ):
+		print "	Valores no lineales"
+		print "sumatoria x = ", self.x_total
+		print "sumatoria x log(y) = ", self.x_y_log
+		print "sumatoria log(y) = ", self.y_log
+		print "sumatoria x^2 = ", self.x_cuadrado 
+		print "total x = ", len(self.x_data)
+		print "total y = ", len(self.y_data)
+		print "media x = ", self.x_media
+		print "media log(y) = ", self.y_log_media	
+		self.b1_nolineal = (self.x_y_log - (self.y_log_media * self.x_total)) / (self.x_cuadrado - (self.x_media * self.x_total))
+		self.b0_nolineal = self.e ** (self.y_log_media - (self.b1_nolineal*self.x_media))
+		ecuacion ="Ecuacion no Lineal:  f(x) = "+ str(round(self.b0_nolineal,6))+"e^"+str(round(self.b1_nolineal,6))+"x"
 		self.m_staticText9.SetLabel(ecuacion)
-		print "Valor de b1 = ",self.b1,"  Valor de b0 = ",self.b0," dividendo = ", sumatoria, " divisor = ", sumaa
+		print "Valor de b1 = ",self.b1_nolineal
+		print "Valor de b0 = ",self.b0_nolineal
+		print ecuacion
 		
 class MyApp(wx.App):
 	def OnInit(self):
@@ -296,6 +344,7 @@ class MyApp(wx.App):
 		self.SetTopWindow(frame)
 		frame.Show()
 		return 1
+		
 if __name__ == "__main__":
     app = MyApp(0)
     app.MainLoop()
