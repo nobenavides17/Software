@@ -1,1 +1,7 @@
 Regresion lineal y no lineal con python
+Requerimientos:
+  +Python 2.7 o superior
+  +Librerias:
+              python-wxtools
+              python-matplotlib
+              python-numpy
