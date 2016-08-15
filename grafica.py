@@ -17,7 +17,7 @@ class Grafica():
 		self.b1_nolineal = b1_nolineal
 		self.b0_nolineal = b0_nolineal
 		self.padre = parent
-		x=range(-5,5)
+		x=range(-10,10)
 		yp =yp
 		xp =xp
 		plt.figure()
@@ -29,12 +29,12 @@ class Grafica():
 		plt.xlabel(r"$Desplazamiento (m)$", fontsize = 16, color = (1,0,0))
 		plt.ylabel(r"$Fuerza (N)$", fontsize = 16, color = (0,0,1))
 		plt.grid(True)
-		plt.grid(color = '0.5', linestyle = '-', linewidth = 0.5)
+		plt.grid(color = '0.5', linestyle = ':', linewidth = 0.5)
 		plt.axis('tight')
 		plt.title('Grafica', fontsize = 28, color = '0.75', verticalalignment = 'baseline', horizontalalignment = 'center')
 		plt.show()
 	def __del__( self ):
-		self.padre.m_textCtrl1.Enable(True)
+		"""self.padre.m_textCtrl1.Enable(True)
 		self.padre.m_button1.Enable(True)
 		self.padre.m_button2.Enable(False)
 		self.padre.m_button3.Enable(False)
@@ -53,4 +53,4 @@ class Grafica():
 		self.padre.b0_nolineal = 0.0
 		self.padre.m_staticText8.SetLabel("")
 		self.padre.m_staticText9.SetLabel("")
-		self.padre.n_data = 0.0
+		self.padre.n_data = 0.0"""

@@ -262,6 +262,8 @@ class MyFrame1 ( wx.Frame ):
 			self.y_log_media = self.y_log / (len(self.y_data))
 			self.lineal()
 			self.no_lineal()
+			k = "K Lineal = "+str(round(self.b1_lineal,5))+"	K no Lineal = "+ str(round(self.b1_nolineal,5)) 
+			self.m_staticText11.SetLabel(k)
 			print "x = ", self.x_data
 			print "y = ", self.y_data
 		
@@ -279,6 +281,8 @@ class MyFrame1 ( wx.Frame ):
 		self.m_textCtrl1.SetValue("")
 		self.m_textCtrl2.SetValue("")
 		self.m_textCtrl3.SetValue("")
+		self.m_staticText9.SetLabel("")
+		self.m_staticText8.SetLabel("")
 		self.x_data = []
 		self.y_data = []
 		self.x_media = 0.0
