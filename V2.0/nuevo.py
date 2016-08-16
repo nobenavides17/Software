@@ -41,11 +41,8 @@ class Calculo ():
 			signo = " + "
 		else:
 			signo = " - "	
-		ecuacion ="Ecuacion Lineal:  f(x) = "+ str(round(self.b1_lineal,6))+"x "+signo+" "+str(round(abs(self.b0_lineal),6))
-		print "Valor de b1 = " ,self.b1_lineal
-		print "Valor de b0 = " ,self.b0_lineal
-		print ecuacion
-	
+		self.ecuacion_lineal ="Ecuacion Lineal:  f(x) = "+ str(round(self.b1_lineal,6))+"x "+signo+" "+str(round(abs(self.b0_lineal),6))
+		
 	def no_lineal ( self ):
 		self.e = 2.71828182846
 		self.vx_log_y = []
@@ -72,10 +69,9 @@ class Calculo ():
 		print "Media log(y) = ", self.v_log_y_media	
 		self.b1_nolineal = (self.vx_y_log - (self.v_log_y_media * self.vx_total_nl)) / (self.vx_x - (self.vx_media_nl * self.vx_total_nl))
 		self.b0_nolineal = self.e ** (self.v_log_y_media - (self.b1_nolineal*self.vx_media_nl))
-		ecuacion ="Ecuacion no Lineal:  f(x) = "+ str(round(self.b0_nolineal,6))+"e^"+str(round(self.b1_nolineal,6))+"x"
-		print "Valor de b1 = ",self.b1_nolineal
-		print "Valor de b0 = ",self.b0_nolineal
-		print ecuacion
+		self.ecuacion_nolineal ="Ecuacion no Lineal:  f(x) = "+ str(round(self.b0_nolineal,6))+"e^"+str(round(self.b1_nolineal,6))+"x"
+		print self.ecuacion_lineal
+		print self.ecuacion_nolineal
 	def graficar( self ):
 		val = True
 		while(val):
