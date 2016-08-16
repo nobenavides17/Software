@@ -318,7 +318,11 @@ class MyFrame1 ( wx.Frame ):
 			flag = flag -1
 		self.b1_lineal = dividendo / divisor
 		self.b0_lineal = self.y_media - (self.b1_lineal*self.x_media)
-		ecuacion ="Ecuacion Lineal:  f(x) = "+ str(round(self.b1_lineal,6))+"x +"+str(round(self.b0_lineal,6))
+		if(self.b0_lineal > 0):
+			signo = " + "
+		else:
+			signo = " - "	
+		ecuacion ="Ecuacion Lineal:  f(x) = "+ str(round(self.b1_lineal,6))+"x "+signo+" "+str(round(abs(self.b0_lineal),6))
 		self.m_staticText8.SetLabel(ecuacion)
 		print "Valor de b1 = " ,self.b1_lineal
 		print "Valor de b0 = " ,self.b0_lineal
